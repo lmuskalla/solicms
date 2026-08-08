@@ -21,6 +21,7 @@ x-php: &php
 services:
   app:
     <<: *php
+    container_name: solicms-app
     ports:
       - "8000:8000"
     healthcheck:
@@ -34,16 +35,19 @@ services:
   # single worker serves every tenant.
   queue:
     <<: *php
+    container_name: solicms-queue
     command: php artisan queue:work redis --tries=3 --max-time=3600 --sleep=1
     stop_signal: SIGTERM
     stop_grace_period: 40s
 
   scheduler:
     <<: *php
+    container_name: solicms-scheduler
     command: php artisan schedule:work
 
   vite:
     image: node:22-bookworm-slim
+    container_name: solicms-vite
     working_dir: /var/www/html
     # Run as the host user so node_modules doesn't end up root-owned on the host.
     user: "${UID:-1000}:${GID:-1000}"
@@ -60,6 +64,7 @@ services:
 
   redis:
     image: redis:8-alpine
+    container_name: solicms-redis
     command: redis-server --appendonly yes
     volumes:
       - redis-data:/data
@@ -74,6 +79,7 @@ services:
 
   mailpit:
     image: axllent/mailpit:latest
+    container_name: solicms-mailpit
     ports:
       - "1025:1025" # SMTP
       - "8025:8025" # web UI
