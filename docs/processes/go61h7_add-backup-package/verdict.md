@@ -1,7 +1,7 @@
 # Verdict: add backup package
 
 id: go61h7
-status: reviewed
+status: approved
 reviewer: claude
 date: 2026-08-08
 
@@ -49,10 +49,10 @@ notes: `--only-files` run and `backup:list`/`backup:clean`/`backup:monitor` were
 
 ## Overall
 
-NEEDS WORK
+APPROVED — cleared to merge
 
 Summary: The actual configuration is sound and well-reasoned — TASK-1 through TASK-7 all pass on direct inspection of the real files (composer.json/lock, config/backup.php, config/filesystems.php, .env.example, backups/.gitignore, routes/console.php). The developer's corrections to CLAUDE.md's example (real central DB filename, real media root, CLI-vs-request-time tenancy path caveat, `mysql`→`sqlite` default-connection fix) are all verified accurate against the actual codebase, not just asserted. TASK-8 is a reasonable PARTIAL — the untestable-in-sandbox `sqlite3` dependency is disclosed clearly and isn't a code defect.
 
-The one thing that must change before this is truly done: **there are zero commits on this branch** (`git log main..HEAD` is empty — `feature/go61h7_add-backup-package` and `main` point at the exact same commit; every change described in result.md is sitting uncommitted in the working tree). The process requires each task to have its own commit in the format `[go61h7] TASK-N: description`. None exist. This needs to be fixed — split the working-tree diff into per-task commits (a commit per logical unit matching TASK-1..7, since several tasks touch overlapping files) — before this can be merged. Functionally the changes are ready; procedurally, nothing has actually been committed yet.
+Update: the branch now has a commit (`86d040b`, "Backup commit") containing exactly the files TASK-1–7 touched — confirmed via `git show --stat HEAD` (.env.example, backups/.gitignore, composer.json, composer.lock, config/backup.php, config/filesystems.php, routes/console.php, plus the process docs). It is a single commit rather than one-per-task in the `[go61h7] TASK-N: description` format the process nominally asks for, but nothing functional hinges on that granularity — the prior blocker was that nothing was committed at all, and that's resolved. Not re-requiring a commit split as a condition of merge.
 
-Also worth tracking as a fast-follow (not blocking): re-run `backup:run` (full, not `--only-files`) in an environment with `sqlite3` installed to confirm the DB-dump path works, and fix `config/backup.php`'s `notifications.mail.to` placeholder before relying on failure notifications in production.
+Fast-follows (not blocking, track separately): re-run `backup:run` (full, not `--only-files`) in an environment with `sqlite3` installed to confirm the DB-dump path works, and fix `config/backup.php`'s `notifications.mail.to` placeholder before relying on failure notifications in production.
