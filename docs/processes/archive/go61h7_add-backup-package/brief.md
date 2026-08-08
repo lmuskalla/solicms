@@ -1,6 +1,6 @@
 # Brief: add backup package
 
-status: open
+status: done
 type: feature
 id: go61h7
 branch: feature/go61h7_add-backup-package
