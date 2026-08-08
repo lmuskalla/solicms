@@ -38,6 +38,17 @@ device file, confirmed: `crw-rw-rw-`, so no artisan command touching a DB connec
 here) — but it means the actual XSS backfill has **not happened yet** and must be tracked as an
 outstanding deploy-time action, not treated as done.
 
+**Correction (post-review, raised by user question):** the result doc's stated precondition for
+TASK-4 — "confirmed a backup exists (`spatie/laravel-backup` is already configured for this)" —
+is **false**. Checked directly: `spatie/laravel-backup` is not in `composer.json`/`composer.lock`,
+there is no `config/backup.php`, and no backup step exists in `Makefile` or `deployment/`. This
+contradicts `docs/CLAUDE.md`, which lists it as a required package to install in step 2/section
+"Backup Strategy," and it was never actually installed by any of the three task sets reviewed
+here. This means the safety precondition TASK-4 depends on (a confirmed backup before running
+`content:sanitize` for real) currently has **no tooling to satisfy it at all** — not "run it,"
+but "the thing that would let you run it doesn't exist yet." This should have been caught during
+this review and is being added now as a corrected, required follow-up below.
+
 TASK-5: PASS
 notes: `dompurify` added to `package.json` `dependencies` (correct section, not devDependencies)
 and lockfile. `resources/js/lib/sanitizeHtml.ts` wraps `DOMPurify.sanitize`. Re-grepped all
@@ -94,10 +105,19 @@ and the task breakdown. Allow-list is sound, both write paths are covered, the i
 covered, hardening items are in place, and the dev-login belt-and-suspenders change is correct.
 
 Required before this can be considered fully resolved in production:
+- **Install and configure `spatie/laravel-backup` first** (`composer require spatie/laravel-backup`,
+  `vendor:publish`, then set `config/backup.php`'s `source.databases`/`source.files.include` per
+  `docs/CLAUDE.md`'s "Backup Strategy" section — central DB, `database/tenants/`, and
+  `storage/app`). It is not installed anywhere in this repo today, contrary to what the result doc
+  assumes. Run `php artisan backup:run` and verify the archive exists before proceeding.
 - **Run `php artisan content:sanitize --dry-run` and then for real** (TASK-4) against every
-  tenant, after a confirmed `spatie/laravel-backup` backup, per the result doc's own instructions.
-  Until this runs, any content saved before this fix landed is still live and unsanitized.
+  tenant, only after that backup is confirmed. Until this runs, any content saved before this fix
+  landed is still live and unsanitized.
 
 Not blocking, but should be fixed:
 - Start committing per-task on this branch/repo going forward so review and rollback are
   actually possible from git history.
+- `docs/CLAUDE.md` lists `spatie/laravel-backup` as a package that should already be installed as
+  part of initial project setup — worth checking whether this was ever done or was silently
+  dropped at some point, since three separate task result docs across this session assumed it
+  existed.
