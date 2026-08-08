@@ -1,6 +1,6 @@
 # Brief: change local docker compose container names
 
-status: open
+status: done
 type: feature
 id: srjww2
 branch: feature/srjww2_change-local-docker-compose-container-names
