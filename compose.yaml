@@ -1,0 +1,83 @@
+name: solicms
+
+# Shared definition for every PHP process (web, queue worker, scheduler).
+x-php: &php
+  build:
+    context: .
+    dockerfile: docker/php/Dockerfile
+    args:
+      UID: ${UID:-1000}
+      GID: ${GID:-1000}
+  volumes:
+    # :z relabels for SELinux (Fedora) — without it the container cannot read the mount.
+    - .:/var/www/html:z
+  depends_on:
+    redis:
+      condition: service_healthy
+    mailpit:
+      condition: service_started
+  restart: unless-stopped
+
+services:
+  app:
+    <<: *php
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@fsockopen('127.0.0.1', 8000) ? 0 : 1);"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+
+  # Tenant context travels in the job payload (QueueTenancyBootstrapper), so a
+  # single worker serves every tenant.
+  queue:
+    <<: *php
+    command: php artisan queue:work redis --tries=3 --max-time=3600 --sleep=1
+    stop_signal: SIGTERM
+    stop_grace_period: 40s
+
+  scheduler:
+    <<: *php
+    command: php artisan schedule:work
+
+  vite:
+    image: node:22-bookworm-slim
+    working_dir: /var/www/html
+    # Run as the host user so node_modules doesn't end up root-owned on the host.
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      # Default HOME is /root, which this user cannot write.
+      HOME: /tmp
+      npm_config_cache: /tmp/.npm
+    volumes:
+      - .:/var/www/html:z
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev"
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # web UI
+    restart: unless-stopped
+
+volumes:
+  redis-data:

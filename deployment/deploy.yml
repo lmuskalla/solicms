@@ -1,0 +1,85 @@
+---
+- name: Deploy to solipages
+  hosts: solicms
+  tasks:
+    - name: Ensure persistent directories exist
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: www-data
+        group: www-data
+      loop:
+        - /home/solicms/database/tenants
+        - /home/solicms/storage/app/public
+        - /home/solicms/storage/app/private
+        - /home/solicms/storage/framework/cache/data
+        - /home/solicms/storage/framework/sessions
+        - /home/solicms/storage/framework/testing
+        - /home/solicms/storage/framework/views
+        - /home/solicms/storage/logs
+
+    - name: Ensure central database file exists
+      copy:
+        content: ""
+        dest: /home/solicms/database/database.sqlite
+        owner: www-data
+        group: www-data
+        force: no
+
+    - name: Copy compose config
+      synchronize:
+        src: ./docker/
+        dest: /home/solicms/
+        rsync_opts:
+          - "--chown=root:root"
+
+    - name: Copy Makefile
+      synchronize:
+        src: ./Makefile
+        dest: /home/solicms/
+        rsync_opts:
+          - "--chown=root:root"
+
+    # Post-deploy checklist item, automated: a stray APP_ENV=local (or a
+    # missing .env entirely) would run this deploy with debug mode and
+    # verbose error pages exposed to real client traffic — see
+    # docs/tasks/2026-08-08_security-review-findings.md TASK-10 (Group 3,
+    # dev-login backdoor). This playbook never templates /home/solicms/.env
+    # itself, so there's nothing here to enforce this beyond checking
+    # whatever the operator already put there.
+    - name: Verify APP_ENV=production before deploying
+      shell: "grep -qx 'APP_ENV=production' /home/solicms/.env"
+      register: app_env_check
+      failed_when: app_env_check.rc != 0
+      changed_when: false
+
+    - name: Sync application source
+      synchronize:
+        src: ../../
+        dest: /home/solicms/src/
+        delete: yes
+        rsync_opts:
+          - "--exclude=.git"
+          - "--exclude=/deployment"
+          - "--exclude=/vendor"
+          - "--exclude=/node_modules"
+          - "--exclude=/database/database.sqlite"
+          - "--exclude=/database/tenants"
+          - "--exclude=/storage"
+          - "--chown=root:root"
+
+    - name: Build image
+      shell: "cd /home/solicms && docker compose build"
+
+    - name: Run central migrations
+      shell: "cd /home/solicms && docker compose run --rm app php artisan migrate --force"
+
+    - name: Run tenant migrations
+      shell: "cd /home/solicms && docker compose run --rm app php artisan tenants:migrate"
+
+    - name: Run theme content migrations
+      shell: "cd /home/solicms && docker compose run --rm app php artisan themes:migrate"
+
+    - name: Restart Docker
+      shell: "cd /home/solicms && docker compose down && docker compose up -d"
+      register: docker_restart

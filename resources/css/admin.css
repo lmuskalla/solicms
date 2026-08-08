@@ -1,0 +1,46 @@
+/*
+ * Admin UI stylesheet — its own Tailwind build, loaded ONLY when an admin
+ * page actually mounts (see Components/Admin/Layout.svelte and
+ * Pages/Admin/Login.svelte, which dynamically `import()` this file in
+ * onMount). It never loads on tenant public pages.
+ *
+ * Palette is sampled directly from the real logo
+ * (public/images/brand/logo.png) — coral, teal, amber, periwinkle on a warm
+ * cream background. This is the one place to change the admin UI's look:
+ * every admin component references these tokens by name, not literal colors,
+ * so editing a value here changes the whole admin UI at once.
+ */
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@source '../js/Pages/Admin/**/*.svelte';
+@source '../js/Components/Admin/**/*.svelte';
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Brand — sampled from public/images/brand/logo.png */
+    --color-admin-primary: #f87051; /* Coral */
+    --color-admin-primary-hover: #e85a3a; /* darker coral; not in the logo, derived for :hover */
+    --color-admin-secondary: #49b3b5; /* Teal */
+    --color-admin-secondary-hover: #3b9799; /* darker teal; derived for :hover */
+    --color-admin-accent: #f6a73a; /* Amber — use sparingly: highlights, onboarding */
+    --color-admin-accent-2: #7692d3; /* Periwinkle — use sparingly: info, secondary highlights */
+
+    --color-admin-bg: #fdfbf8; /* Cream — the logo's own background */
+    --color-admin-card: #ffffff;
+    --color-admin-border: #e7e2d9;
+
+    --color-admin-text: #0f172a; /* Ink — sampled from the wordmark */
+    --color-admin-text-secondary: #55606b;
+    --color-admin-text-muted: #8891a0;
+
+    --color-admin-error: #c13d3d;
+    --color-admin-success: #1f9d6c;
+    --color-admin-info: #4c63a8; /* deepened periwinkle, readable as text on white */
+
+    /* Cards */
+    --radius-admin-card: 12px;
+    --shadow-admin-card: 0 2px 10px rgba(0, 0, 0, 0.05);
+}

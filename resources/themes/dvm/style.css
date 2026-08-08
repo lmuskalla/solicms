@@ -1,0 +1,650 @@
+/*
+ * DVM Bündnis theme — ported from the real WordPress theme's
+ * wp-content/themes/dvm/assets/css/styles.css, one-to-one.
+ *
+ * This file is only ever fetched when a dvm-themed page is actually being
+ * rendered (see Pages/Frontend/Page.svelte's lazy per-theme import), so bare
+ * element selectors are safe here exactly as the source wrote them — this CSS
+ * is never in the document at the same time as the admin UI or another
+ * tenant's theme.
+ *
+ * Two mechanical adaptations were required, nothing else:
+ *   1. The source's three `@import "tailwindcss/..."` lines are dropped —
+ *      Tailwind is already loaded once globally by resources/css/app.css;
+ *      importing it again per-theme would duplicate the reset/utility layers.
+ *   2. `@screen md { }` (Tailwind v3 syntax, removed in v4) becomes the
+ *      literal `@media (min-width: 768px)` it expanded to — same breakpoint,
+ *      just spelled the v4 way.
+ *
+ * Every color, size, and animation value below is unchanged from the source.
+ */
+
+/* Needed for @apply below — this file is its own Vite module, not part of
+ * app.css's import chain, so Tailwind doesn't know about its utilities here
+ * without being told explicitly. Doesn't import Tailwind a second time. */
+@reference "tailwindcss";
+
+body {
+    font-family: 'D-DIN', sans-serif;
+    @apply tracking-normal leading-relaxed;
+    overflow-x: hidden;
+    @apply antialiased;
+}
+
+p {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    @media (min-width: 768px) {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+}
+
+/* ─── Homepage ──────────────────────────────────────────────── */
+
+.homepage {
+    section {
+        z-index: 20;
+
+        &.hero-section {
+            display: flex;
+            align-items: flex-end;
+            min-height: 100svh;
+            clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+            padding-bottom: 8vh;
+
+            @media (min-width: 768px) {
+                align-items: center;
+                min-height: 100vh;
+                clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+                padding-bottom: 10vh;
+            }
+        }
+
+        div.teaser,
+        div.banner {
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 3rem;
+            padding-bottom: 5rem;
+            max-width: 1024px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1.125rem;
+            line-height: 1.625;
+
+            @media (min-width: 768px) {
+                padding-top: 6rem;
+                padding-bottom: 8rem;
+                font-size: 1.5rem;
+            }
+        }
+
+        div.teaser {
+            position: relative;
+            z-index: 10;
+        }
+
+        div.banner {
+            h1 {
+                @apply text-4xl font-bold leading-tight mb-4;
+                max-width: 100%;
+
+                @media (min-width: 768px) {
+                    font-size: 3rem;
+                    max-width: 58%;
+                }
+
+                @media (min-width: 1024px) {
+                    font-size: 3.75rem;
+                }
+            }
+
+            p {
+                font-size: 1rem;
+                @apply text-gray-600 max-w-xl;
+
+                @media (min-width: 768px) {
+                    font-size: 1.125rem;
+                }
+            }
+        }
+
+        div.read-more {
+            transition-property: max-height;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 0.4s;
+            max-height: 10000px;
+            height: auto;
+            margin-bottom: 2rem;
+            max-width: 1024px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1rem;
+            line-height: 1.625;
+            position: relative;
+            z-index: 10;
+            border-left: 3px solid currentColor;
+            padding: 0 1.5rem 0 1.75rem;
+
+            @media (min-width: 768px) {
+                margin-bottom: 4rem;
+                font-size: 1.125rem;
+                padding: 0 2rem 0 2.5rem;
+            }
+
+            p:last-of-type {
+                margin-bottom: 0;
+            }
+
+            &.hidden {
+                max-height: 0;
+                display: block;
+                overflow: hidden;
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+        }
+
+        h1 {
+            font-size: 1.875rem;
+            line-height: 1.5;
+
+            @media (min-width: 768px) {
+                font-size: 2.25rem;
+            }
+        }
+
+        /* Section numbers — decorative, top-right of each coloured block */
+        .section-num {
+            display: none;
+
+            @media (min-width: 768px) {
+                display: block;
+                position: absolute;
+                top: 1.5rem;
+                right: 2.5rem;
+                font-size: clamp(4rem, 8vw, 7rem);
+                font-weight: 700;
+                line-height: 0.9;
+                letter-spacing: -0.05em;
+                opacity: 0.15;
+                pointer-events: none;
+                user-select: none;
+                z-index: 0;
+            }
+        }
+    }
+}
+
+/* ─── Header ────────────────────────────────────────────────── */
+
+header {
+    transition-property: background-color, border-color, box-shadow, filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 0.2s;
+    position: relative;
+    background-color: #fff;
+
+    .hamburger-btn {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-right: 1rem;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        background: none;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        box-shadow: none;
+        font-weight: normal;
+        text-transform: none;
+        letter-spacing: normal;
+        gap: 5px;
+
+        &:hover {
+            background: none;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        span {
+            display: block;
+            background-color: #000;
+            border-radius: 9999px;
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 0.3s;
+            width: 24px;
+            height: 2px;
+        }
+
+        &.open {
+            span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+            span:nth-child(2) { opacity: 0; }
+            span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+        }
+
+        @media (min-width: 768px) {
+            display: none;
+        }
+    }
+
+    .header-menu {
+        position: absolute;
+        left: 0;
+        top: 100%;
+        width: 100%;
+        background-color: #fff;
+        z-index: 50;
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(-6px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+
+        &.open {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
+            border-bottom: 2px solid #dfe9bb;
+        }
+
+        @media (min-width: 768px) {
+            position: static;
+            visibility: visible;
+            opacity: 1;
+            transform: none;
+            transition: none;
+            height: 4rem;
+        }
+
+        ul {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: .5rem 0 1rem 0;
+
+            @media (min-width: 768px) {
+                flex-direction: row;
+                justify-content: flex-end;
+                align-items: center;
+                padding: 0 2rem 0 0;
+                height: 100%;
+            }
+
+            li a {
+                position: relative;
+                display: block;
+                width: 100%;
+                padding: .75rem 1.5rem;
+                font-size: 1.25rem;
+                font-weight: 400;
+                letter-spacing: .025em;
+                color: #000;
+
+                @media (min-width: 768px) {
+                    display: inline;
+                    width: auto;
+                    padding: .375rem 1rem .75rem;
+                    font-size: 1.25rem;
+                }
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 1rem;
+                    right: 1rem;
+                    height: 3px;
+                    transform: scaleX(0);
+                    transform-origin: left center;
+                    transition: transform .2s cubic-bezier(.4, 0, .2, 1);
+                }
+
+                &:hover::after {
+                    transform: scaleX(1);
+                }
+            }
+
+            li:nth-child(3n+1) a::after { background-color: #7458a8; }
+            li:nth-child(3n+2) a::after { background-color: #d93025; }
+            li:nth-child(3n+3) a::after { background-color: #8aab2a; }
+
+            li.current-menu-item > a { font-weight: 700; }
+        }
+    }
+
+    &.scrolled-out {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 30;
+        border-bottom: 2px solid #dfe9bb;
+        filter: drop-shadow(0 10px 8px rgb(0 0 0 / .04)) drop-shadow(0 4px 3px rgb(0 0 0 / .1));
+
+        .header-menu {
+            background-color: rgba(255, 255, 255, 0.98);
+
+            &.open {
+                background-color: rgba(255, 255, 255, 0.98);
+            }
+        }
+    }
+}
+
+/* ─── Footer ────────────────────────────────────────────────── */
+
+footer {
+    background-color: #5e3e9a;
+    color: #fff;
+    width: 100%;
+    position: relative;
+    z-index: 10;
+
+    .footer-inner {
+        max-width: 1024px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 3rem 1.5rem;
+
+        @media (min-width: 768px) {
+            padding: 4rem 2rem;
+        }
+    }
+
+    .footer-wordmark {
+        display: block;
+        font-size: 1.75rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 0.75rem;
+    }
+
+    .footer-brand {
+        p {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: .875rem;
+            line-height: 1.625;
+            max-width: 20rem;
+            margin: 0;
+        }
+    }
+
+    .footer-menu {
+        z-index: 20;
+
+        ul {
+            display: flex;
+            flex-direction: column;
+            gap: .375rem;
+
+            li a {
+                color: rgba(255, 255, 255, 0.75);
+                font-size: .875rem;
+                transition-property: color, border-color;
+                transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+                transition-duration: .15s;
+                padding-bottom: 2px;
+                border-bottom: 2px solid transparent;
+
+                &:hover {
+                    color: #fff;
+                    border-color: rgba(255, 255, 255, 0.5);
+                }
+            }
+        }
+    }
+
+    .footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        text-align: center;
+        font-size: .8125rem;
+        color: rgba(255, 255, 255, 0.4);
+    }
+}
+
+/* ─── Page wrapper offset when header goes sticky ───────────── */
+
+.page {
+    &.scrolled-out {
+        margin-top: 8rem;
+    }
+
+    article .entry-content,
+    article > div > div {
+        font-size: 1.125rem;
+        line-height: 1.75;
+
+        @media (min-width: 768px) {
+            font-size: 1.25rem;
+        }
+    }
+}
+
+/* ─── Buttons ───────────────────────────────────────────────── */
+
+button {
+    border-radius: .25rem;
+    @apply font-bold uppercase tracking-wide shadow-md;
+    transition-property: background-color, color, box-shadow, padding;
+    transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+    transition-duration: .15s;
+    padding: .5rem 2rem;
+
+    &:hover {
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+        @apply shadow-lg;
+    }
+}
+
+.button-primary {
+    background-color: #7458a8;
+    color: #fff;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 1rem;
+
+    &:hover {
+        background-color: #5e3e9a;
+    }
+}
+
+.button-secondary {
+    background-color: transparent;
+    color: #1a1a1a;
+    border: 2px solid #1a1a1a;
+    padding-top: .875rem;
+    padding-bottom: .875rem;
+    font-size: 1rem;
+
+    &:hover {
+        background-color: #1a1a1a;
+        color: #fff;
+    }
+}
+
+/* ─── Named colors ──────────────────────────────────────────── */
+/* Not in the source stylesheet — the original theme defines these as
+ * Tailwind color tokens in tailwind.config.js (bg-blueAccent etc. were
+ * generated utilities). Reproduced here as plain rules with the exact same
+ * values and class names, since we're not extending Tailwind's global theme
+ * for one tenant. */
+
+.bg-blueAccent  { background-color: #7458a8; }
+.bg-redAccent   { background-color: #d93025; }
+.bg-greenAccent { background-color: #8aab2a; }
+.bg-baseAccent  { background-color: #dfe9bb; }
+.bg-logoBeige   { background-color: #f0ede8; }
+
+/* ─── Decorative bubbles ────────────────────────────────────── */
+
+.bubble {
+    position: absolute;
+    border-radius: 9999px;
+    z-index: 15;
+    opacity: 0.7;
+    scale: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: default;
+    transition: opacity .35s ease, scale .35s cubic-bezier(.34, 1.56, .64, 1);
+
+    &:hover {
+        opacity: 1;
+        scale: 1.25;
+    }
+
+    span {
+        color: #fff;
+        font-weight: 700;
+        font-size: 1rem;
+        text-align: center;
+        padding: 0 .75rem;
+        line-height: 1.3;
+        opacity: 0;
+        transition: opacity .2s ease;
+        display: none;
+
+        @media (min-width: 768px) {
+            display: block;
+        }
+    }
+
+    &:hover span {
+        opacity: 1;
+    }
+}
+
+.outline-bubble {
+    border-radius: 9999px;
+    z-index: 10;
+    border: 4px solid #dfe9bb;
+}
+
+.hero-bubble-1 {
+    width: clamp(55px, 13vw, 190px);
+    height: clamp(55px, 13vw, 190px);
+    top: 5%;
+    right: 4%;
+
+    @media (min-width: 768px) {
+        width: 190px;
+        height: 190px;
+        top: 18%;
+        right: 14%;
+    }
+}
+
+.hero-bubble-2 {
+    width: clamp(38px, 9vw, 135px);
+    height: clamp(38px, 9vw, 135px);
+    top: 18%;
+    right: 18%;
+
+    @media (min-width: 768px) {
+        top: 36%;
+        right: 26%;
+        width: 135px;
+        height: 135px;
+    }
+}
+
+.hero-bubble-3 {
+    width: clamp(28px, 6vw, 95px);
+    height: clamp(28px, 6vw, 95px);
+    top: 34%;
+    right: 5%;
+
+    @media (min-width: 768px) {
+        width: 95px;
+        height: 95px;
+        top: 52%;
+        right: 15%;
+    }
+}
+
+.hero-bubble-outline {
+    width: 80vw;
+    height: 80vw;
+    bottom: 0;
+    right: -35%;
+
+    @media (min-width: 768px) {
+        width: 48vw;
+        height: 48vw;
+        bottom: 0;
+        right: -14%;
+    }
+}
+
+#page ul {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+}
+
+#page ul li {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+/* ─── Floating animations ───────────────────────────────────── */
+
+@keyframes dvm-float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-20px); }
+}
+
+@keyframes dvm-float-delayed {
+    0%, 100% { transform: translateY(0px) translateX(0px); }
+    50%       { transform: translateY(-15px) translateX(10px); }
+}
+
+@keyframes dvm-float-slow {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-10px); }
+}
+
+.animate-float         { animation: dvm-float 6s ease-in-out infinite; }
+.animate-float-delayed { animation: dvm-float-delayed 8s ease-in-out infinite; animation-delay: 1s; }
+.animate-float-slow    { animation: dvm-float-slow 10s ease-in-out infinite; animation-delay: 2s; }
+
+/* ─── Prose (addition — not in source) ───────────────────────── */
+/* Content is authored via our own Tiptap editor and may contain lists;
+ * the source theme relied on ACF fields that didn't need this. */
+
+.dvm-prose ul { list-style: disc; margin: 0.75rem 0 0.75rem 1.5rem; }
+.dvm-prose li { margin: 0.5rem 0; }
+.dvm-prose strong { font-weight: 700; }
+.dvm-prose a { text-decoration: underline; }
+
+/* ─── Font — from functions.php's wp_head @font-face injection ──────── */
+
+@font-face {
+    font-family: 'D-DIN';
+    src: url('./assets/fonts/D-DIN.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'D-DIN';
+    src: url('./assets/fonts/D-DIN-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}

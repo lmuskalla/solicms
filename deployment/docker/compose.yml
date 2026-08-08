@@ -1,0 +1,46 @@
+x-app: &app
+  build:
+    context: ./src
+    dockerfile: ../Dockerfile
+    args:
+      UID: ${UID:-33}
+      GID: ${GID:-33}
+  restart: unless-stopped
+  env_file:
+    - .env
+  volumes:
+    - ./database/database.sqlite:/var/www/html/database/database.sqlite
+    - ./database/tenants:/var/www/html/database/tenants
+    - ./storage:/var/www/html/storage
+  networks:
+    - db
+
+services:
+  app:
+    <<: *app
+    container_name: solicms-app
+    environment:
+      LOG_PROCESS: app
+    ports:
+      - "8000:8000"
+    mem_limit: 1024M
+
+  queue:
+    <<: *app
+    container_name: solicms-queue
+    environment:
+      LOG_PROCESS: queue
+    command: php artisan queue:work redis --tries=3 --max-time=3600 --sleep=1
+    stop_signal: SIGTERM
+    stop_grace_period: 40s
+
+  scheduler:
+    <<: *app
+    container_name: solicms-scheduler
+    environment:
+      LOG_PROCESS: scheduler
+    command: php artisan schedule:work
+
+networks:
+  db:
+    external: true

@@ -1,0 +1,3 @@
+<div class="bubble bg-blueAccent animate-float w-16 h-16 top-16 right-4 md:w-20 md:h-20 md:top-20 md:right-auto md:left-12" style="z-index: 50;"></div>
+<div class="bubble bg-redAccent animate-float-delayed w-12 h-12 top-24 right-16 md:w-16 md:h-16 md:top-32 md:right-auto md:left-20"></div>
+<div class="bubble bg-baseAccent animate-float-slow w-9 h-9 top-36 right-4 md:w-12 md:h-12 md:top-40 md:right-auto md:left-32"></div>

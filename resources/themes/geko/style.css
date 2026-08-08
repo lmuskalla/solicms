@@ -1,0 +1,131 @@
+/*
+ * GEKO Bremen (Gesundheitskollektiv Bremen e.V.) theme.
+ *
+ * Only three things live here, per THEMES.md §3 — everything else is
+ * Tailwind utility classes directly in the .svelte markup:
+ *   1. @font-face for the brand's own fonts (Inter, Inter Tight, Noto Sans
+ *      Arabic — the CI explicitly calls out Noto Sans Arabic for Arabic and
+ *      Farsi content in the multilingual welcome strip on Home).
+ *   2. Design tokens as CSS custom properties, scoped to .theme-geko (never
+ *      :root or bare elements) — contained even if the lazy-load/never-
+ *      coexist assumption in Pages/Frontend/Page.svelte were ever violated.
+ *   3. .rich-text: the @tailwindcss/typography `prose` base plus the
+ *      specific brand overrides it doesn't cover, for {@html}-rendered
+ *      wysiwyg section content that Tailwind classes in markup can't reach.
+ */
+/* Reference the real app stylesheet, not bare "tailwindcss" — @apply prose
+ * below needs @tailwindcss/typography, which is only registered as a plugin
+ * in app.css, not in Tailwind's own base import. */
+@reference "../../css/app.css";
+
+@font-face {
+    font-family: 'Inter';
+    src: url('./assets/fonts/Inter-Variable.ttf');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('./assets/fonts/Inter-Italic-Variable.ttf');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Inter Tight';
+    src: url('./assets/fonts/InterTight-Variable.ttf');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Noto Sans Arabic';
+    src: url('./assets/fonts/NotoSansArabic-Variable.ttf');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+.theme-geko {
+    --geko-amber: #fcae00;
+    --geko-violet: #884aff;
+    --geko-indigo: #2f195f;
+    --geko-mint: #b7f0ad;
+    /* A flat, light tint of --geko-violet (not opacity-blended) for the
+     * "Unser Kollektiv"-style secondary card background. */
+    --geko-violet-tint: #efe8ff;
+
+    /* CI spec: "Headlines: Inter Tight Light / Fließtext: Inter Light" — an
+     * intentionally light, airy weight throughout, not the default 400.
+     * font-size bumped from the browser default 16px — the brand's light
+     * weight reads thin/small at 16px, needs the extra size to stay legible. */
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 1.125rem;
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        font-family: 'Inter Tight', 'Inter', ui-sans-serif, system-ui, sans-serif;
+        font-weight: 300;
+    }
+
+    [lang='ar'],
+    [lang='fa'] {
+        font-family: 'Noto Sans Arabic', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    /* Don't strip focus outlines — see THEMES.md §5 — just make them read on
+     * both the light body and the dark indigo footer/hero. */
+    :focus-visible {
+        outline: 3px solid var(--geko-violet);
+        outline-offset: 2px;
+    }
+}
+
+.theme-geko .rich-text {
+    /* prose-lg, not prose — the plain 'prose' scale (1rem body, ~1.5em/1.25em
+     * headings) reads tiny now that h1 (outside this block, set in Page.svelte)
+     * is text-4xl. prose-lg's larger base (1.125rem) scales every element,
+     * headings included, proportionally instead of hand-tuning each one. */
+    @apply prose prose-lg prose-neutral max-w-none;
+
+    a {
+        color: var(--geko-violet);
+        text-decoration-thickness: 1.5px;
+    }
+
+    h2,
+    h3 {
+        font-family: 'Inter Tight', 'Inter', ui-sans-serif, system-ui, sans-serif;
+        font-weight: 300;
+        color: var(--geko-indigo);
+    }
+
+    /* Explicit sizes on top of prose-lg's own scale, so h2/h3 read clearly
+     * as headings under the now much bigger (text-4xl) page h1 — prose-lg's
+     * defaults (1.5em/1.25em of a 1.125rem base) alone were still too close
+     * together to feel hierarchical at this scale. */
+    h2 {
+        @apply text-3xl;
+    }
+
+    h3 {
+        @apply text-2xl;
+    }
+
+    strong {
+        /* prose's default bold reads heavier than the brand's light system;
+         * a step up from the 300 body weight is enough to still read as emphasis. */
+        font-weight: 500;
+    }
+
+    li::marker {
+        color: var(--geko-violet);
+    }
+}
