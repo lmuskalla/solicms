@@ -60,6 +60,17 @@ return [
             'report' => false,
         ],
 
+        // Destination for spatie/laravel-backup archives. Rooted outside storage/
+        // (rather than the 'local' disk) so backup zips never land inside the
+        // tree that config/backup.php backs up — nesting them there would make
+        // each backup include every previous one, ballooning archive size.
+        'backups' => [
+            'driver' => 'local',
+            'root' => base_path('backups'),
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*
