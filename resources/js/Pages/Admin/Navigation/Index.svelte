@@ -1,8 +1,6 @@
 <script lang="ts">
-    import { router } from '@inertiajs/svelte';
-    import { untrack } from 'svelte';
     import Layout from '../../../Components/Admin/Layout.svelte';
-    import ConfirmDialog from '../../../Components/Admin/ConfirmDialog.svelte';
+    import NavList from './NavList.svelte';
     import type { Auth } from '../../../types';
 
     interface NavItemRow {
@@ -21,90 +19,13 @@
 
     interface Props {
         auth?: Auth;
-        items: NavItemRow[];
+        headerItems: NavItemRow[];
+        footerItems: NavItemRow[];
         pages: PageOption[];
         flash?: { success?: string | null };
     }
 
-    let { auth, items, pages, flash }: Props = $props();
-
-    // --- Add a page ---
-    let selectedPageId = $state(untrack(() => pages[0]?.id ?? null));
-    let addingPage = $state(false);
-
-    function addPage(event: SubmitEvent): void {
-        event.preventDefault();
-        const page = pages.find((p) => p.id === selectedPageId);
-        if (!page) return;
-
-        addingPage = true;
-        router.post(
-            '/admin/navigation',
-            { type: 'page', page_id: page.id, label: page.title },
-            { onFinish: () => (addingPage = false) },
-        );
-    }
-
-    // --- Add a link ---
-    let linkLabel = $state('');
-    let linkUrl = $state('');
-    let addingLink = $state(false);
-
-    function addLink(event: SubmitEvent): void {
-        event.preventDefault();
-        addingLink = true;
-
-        router.post(
-            '/admin/navigation',
-            { type: 'link', label: linkLabel, url: linkUrl },
-            {
-                onSuccess: () => {
-                    linkLabel = '';
-                    linkUrl = '';
-                },
-                onFinish: () => (addingLink = false),
-            },
-        );
-    }
-
-    // --- Reorder ---
-    function move(item: NavItemRow, direction: 'up' | 'down'): void {
-        router.post(`/admin/navigation/${item.id}/move`, { direction }, { preserveScroll: true });
-    }
-
-    // --- Inline edit ---
-    let editingId = $state<number | null>(null);
-    let editLabel = $state('');
-    let editUrl = $state('');
-
-    function startEdit(item: NavItemRow): void {
-        editingId = item.id;
-        editLabel = item.label;
-        editUrl = item.url ?? '';
-    }
-
-    function saveEdit(item: NavItemRow): void {
-        router.patch(
-            `/admin/navigation/${item.id}`,
-            { label: editLabel, url: editUrl },
-            { preserveScroll: true, onSuccess: () => (editingId = null) },
-        );
-    }
-
-    // --- Delete ---
-    let confirmDeleteOpen = $state(false);
-    let itemToDelete = $state<NavItemRow | null>(null);
-
-    function askDelete(item: NavItemRow): void {
-        itemToDelete = item;
-        confirmDeleteOpen = true;
-    }
-
-    function confirmDelete(): void {
-        if (itemToDelete) {
-            router.delete(`/admin/navigation/${itemToDelete.id}`, { preserveScroll: true });
-        }
-    }
+    let { auth, headerItems, footerItems, pages, flash }: Props = $props();
 </script>
 
 <svelte:head>
@@ -115,155 +36,17 @@
     {#snippet children()}
         <h1 class="text-2xl font-semibold tracking-tight text-admin-text">Navigation</h1>
         <p class="mt-1 text-sm text-admin-text-secondary">
-            Stellen Sie zusammen, was im Menü Ihrer Website erscheint — Seiten und externe Links, in beliebiger Reihenfolge.
+            Stellen Sie zusammen, was in der Kopf- und Fußzeile Ihrer Website erscheint — Seiten und externe Links, in
+            beliebiger Reihenfolge.
         </p>
 
         {#if flash?.success}
             <p class="mt-4 rounded-lg bg-admin-success/10 px-4 py-3 text-sm text-admin-success">{flash.success}</p>
         {/if}
 
-        <div class="mt-6 overflow-hidden rounded-admin-card border border-admin-border bg-admin-card shadow-admin-card">
-            {#each items as item, i (item.id)}
-                <div class="px-5 py-4 {i > 0 ? 'border-t border-admin-border' : ''}">
-                    {#if editingId === item.id}
-                        <div class="space-y-2">
-                            <input
-                                type="text"
-                                bind:value={editLabel}
-                                placeholder="Beschriftung"
-                                class="w-full rounded-lg border border-admin-border px-3 py-2 text-sm text-admin-text shadow-sm focus:border-admin-primary focus:outline-none focus:ring-1 focus:ring-admin-primary"
-                            />
-                            {#if item.type === 'link'}
-                                <input
-                                    type="text"
-                                    bind:value={editUrl}
-                                    placeholder="https://…"
-                                    class="w-full rounded-lg border border-admin-border px-3 py-2 text-sm text-admin-text shadow-sm focus:border-admin-primary focus:outline-none focus:ring-1 focus:ring-admin-primary"
-                                />
-                            {/if}
-                            <div class="flex gap-2">
-                                <button
-                                    onclick={() => saveEdit(item)}
-                                    class="cursor-pointer rounded-lg bg-admin-primary px-3 py-1.5 text-sm font-semibold text-white hover:bg-admin-primary-hover"
-                                >
-                                    Speichern
-                                </button>
-                                <button
-                                    onclick={() => (editingId = null)}
-                                    class="cursor-pointer rounded-lg border border-admin-border px-3 py-1.5 text-sm text-admin-text-secondary hover:bg-admin-bg"
-                                >
-                                    Abbrechen
-                                </button>
-                            </div>
-                        </div>
-                    {:else}
-                        <div class="flex items-center justify-between gap-4">
-                            <div class="min-w-0">
-                                <p class="truncate text-sm font-medium text-admin-text">{item.label}</p>
-                                <p class="truncate text-xs text-admin-text-muted">
-                                    {item.type === 'page' ? `Seite: ${item.page?.title ?? '(gelöscht)'}` : item.url}
-                                </p>
-                            </div>
-                            <div class="flex shrink-0 items-center gap-1">
-                                <button
-                                    onclick={() => move(item, 'up')}
-                                    disabled={i === 0}
-                                    aria-label="Nach oben verschieben"
-                                    class="cursor-pointer rounded p-1.5 text-admin-text-muted hover:bg-admin-bg hover:text-admin-text disabled:cursor-default disabled:opacity-30"
-                                >
-                                    <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
-                                        <path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .55.24l4.5 4.83a.75.75 0 1 1-1.1 1.02L10.75 5.9v9.85a.75.75 0 0 1-1.5 0V5.9L6.05 9.09a.75.75 0 1 1-1.1-1.02l4.5-4.83A.75.75 0 0 1 10 3Z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <button
-                                    onclick={() => move(item, 'down')}
-                                    disabled={i === items.length - 1}
-                                    aria-label="Nach unten verschieben"
-                                    class="cursor-pointer rounded p-1.5 text-admin-text-muted hover:bg-admin-bg hover:text-admin-text disabled:cursor-default disabled:opacity-30"
-                                >
-                                    <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
-                                        <path fill-rule="evenodd" d="M10 17a.75.75 0 0 1-.55-.24l-4.5-4.83a.75.75 0 1 1 1.1-1.02l3.2 3.44V4.5a.75.75 0 0 1 1.5 0v9.85l3.2-3.44a.75.75 0 1 1 1.1 1.02l-4.5 4.83A.75.75 0 0 1 10 17Z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <button
-                                    onclick={() => startEdit(item)}
-                                    class="cursor-pointer px-2 py-1.5 text-sm text-admin-text-secondary hover:text-admin-text"
-                                >
-                                    Bearbeiten
-                                </button>
-                                <button
-                                    onclick={() => askDelete(item)}
-                                    class="cursor-pointer px-2 py-1.5 text-sm text-admin-text-muted hover:text-admin-error"
-                                >
-                                    Entfernen
-                                </button>
-                            </div>
-                        </div>
-                    {/if}
-                </div>
-            {:else}
-                <p class="px-5 py-8 text-center text-sm text-admin-text-secondary">Das Menü ist noch leer.</p>
-            {/each}
+        <div class="mt-6 grid items-start gap-6 xl:grid-cols-2">
+            <NavList title="Kopfzeilen-Navigation" menu="header" items={headerItems} {pages} />
+            <NavList title="Fußzeilen-Navigation" menu="footer" items={footerItems} {pages} />
         </div>
-
-        <div class="mt-6 grid gap-4 sm:grid-cols-2">
-            <form onsubmit={addPage} class="rounded-admin-card border border-admin-border bg-admin-card p-5 shadow-admin-card">
-                <h2 class="text-sm font-semibold text-admin-text">Seite hinzufügen</h2>
-                <div class="mt-3 flex gap-2">
-                    <select
-                        bind:value={selectedPageId}
-                        class="w-full rounded-lg border border-admin-border px-3 py-2 text-sm text-admin-text shadow-sm focus:border-admin-primary focus:outline-none focus:ring-1 focus:ring-admin-primary"
-                    >
-                        {#each pages as page (page.id)}
-                            <option value={page.id}>{page.title}</option>
-                        {/each}
-                    </select>
-                    <button
-                        type="submit"
-                        disabled={addingPage || pages.length === 0}
-                        class="shrink-0 cursor-pointer rounded-lg bg-admin-primary px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-admin-primary-hover disabled:opacity-50"
-                    >
-                        Hinzufügen
-                    </button>
-                </div>
-            </form>
-
-            <form onsubmit={addLink} class="rounded-admin-card border border-admin-border bg-admin-card p-5 shadow-admin-card">
-                <h2 class="text-sm font-semibold text-admin-text">Link hinzufügen</h2>
-                <div class="mt-3 space-y-2">
-                    <input
-                        type="text"
-                        bind:value={linkLabel}
-                        placeholder="Beschriftung"
-                        required
-                        class="w-full rounded-lg border border-admin-border px-3 py-2 text-sm text-admin-text shadow-sm focus:border-admin-primary focus:outline-none focus:ring-1 focus:ring-admin-primary"
-                    />
-                    <div class="flex gap-2">
-                        <input
-                            type="text"
-                            bind:value={linkUrl}
-                            placeholder="https://…"
-                            required
-                            class="w-full rounded-lg border border-admin-border px-3 py-2 text-sm text-admin-text shadow-sm focus:border-admin-primary focus:outline-none focus:ring-1 focus:ring-admin-primary"
-                        />
-                        <button
-                            type="submit"
-                            disabled={addingLink}
-                            class="shrink-0 cursor-pointer rounded-lg bg-admin-primary px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-admin-primary-hover disabled:opacity-50"
-                        >
-                            Hinzufügen
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <ConfirmDialog
-            bind:open={confirmDeleteOpen}
-            title="Aus dem Menü entfernen"
-            message={`„${itemToDelete?.label}" aus der Navigation entfernen? Die Seite selbst bleibt erhalten.`}
-            confirmLabel="Entfernen"
-            onConfirm={confirmDelete}
-        />
     {/snippet}
 </Layout>
