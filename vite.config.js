@@ -16,11 +16,9 @@ function getThemeSlugs() {
 export default defineConfig(({ command }) => {
     let input = ['resources/css/app.css', 'resources/js/app.js'];
 
-    if (command === 'build') {
-        const themes = getThemeSlugs();
-        const themeEntries = themes.map(slug => `resources/css/themes/${slug}.css`);
-        input = input.concat(themeEntries);
-    }
+    const themes = getThemeSlugs();
+    const themeEntries = themes.map(slug => `resources/css/themes/${slug}.css`);
+    input = input.concat(themeEntries);
 
     return {
         plugins: [

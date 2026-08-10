@@ -10,6 +10,8 @@
             $theme = tenant('theme') ?? 'default';
         @endphp
         @vite(["resources/css/themes/{$theme}.css"])
+    @else
+        @vite(['resources/css/themes/default.css', 'resources/css/themes/dvm.css', 'resources/css/themes/geko.css', 'resources/css/themes/tabubruch.css'])
     @endif
     @inertiaHead
 </head>
