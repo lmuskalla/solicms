@@ -36,6 +36,8 @@ export interface ThemeProps {
     sections: Record<string, { value: string; type?: string; alt?: string | null; posts?: PostRecord[] }>;
     config: Record<string, string>;
     nav: Array<{ label: string; href: string }>;
+    /** The footer menu — same shape as `nav`, but only items with menu === 'footer'. May be empty. */
+    footerNav: Array<{ label: string; href: string }>;
     /** This tenant's canonical URL for the current page — see Frontend\PageController and Components/Frontend/SeoHead.svelte. */
     url?: string;
 }

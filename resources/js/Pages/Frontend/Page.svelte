@@ -13,11 +13,12 @@
         sections: Record<string, { value: string }>;
         config: Record<string, string>;
         nav: Array<{ label: string; href: string }>;
+        footerNav: Array<{ label: string; href: string }>;
         themeComponent: string;
         url: string;
     }
 
-    let { page, sections, config, nav, themeComponent, url }: Props = $props();
+    let { page, sections, config, nav, footerNav, themeComponent, url }: Props = $props();
 
     let Template = $state<Component | null>(null);
 
@@ -50,5 +51,5 @@
 
 <!-- Svelte 5: render the component variable directly; <svelte:component> is deprecated -->
 {#if Template}
-    <Template {page} {sections} {config} {nav} {url} />
+    <Template {page} {sections} {config} {nav} {footerNav} {url} />
 {/if}
