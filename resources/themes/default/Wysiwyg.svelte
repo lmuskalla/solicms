@@ -9,10 +9,11 @@
         sections: Record<string, { value: string; type?: string }>;
         config: Record<string, string>;
         nav: Array<{ label: string; href: string }>;
+        footerNav: Array<{ label: string; href: string }>;
         url?: string;
     }
 
-    let { page, sections, config, nav, url }: Props = $props();
+    let { page, sections, config, nav, footerNav, url }: Props = $props();
 </script>
 
 <SeoHead title={`${page.title} — ${config.site_name ?? ''}`} {sections} {url} />
@@ -29,5 +30,5 @@
         {/if}
     </article>
 
-    <SiteFooter {config} />
+    <SiteFooter {config} {footerNav} />
 </div>

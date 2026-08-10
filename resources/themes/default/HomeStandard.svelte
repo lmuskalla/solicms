@@ -8,10 +8,11 @@
         sections: Record<string, { value: string; type?: string; alt?: string | null }>;
         config: Record<string, string>;
         nav: Array<{ label: string; href: string }>;
+        footerNav: Array<{ label: string; href: string }>;
         url?: string;
     }
 
-    let { page, sections, config, nav, url }: Props = $props();
+    let { page, sections, config, nav, footerNav, url }: Props = $props();
 
     // Hard-defined for this theme, not tenant-configurable — see SetupTenant's
     // comment on seedSiteConfig().
@@ -59,5 +60,5 @@
         </section>
     {/if}
 
-    <SiteFooter {config} />
+    <SiteFooter {config} {footerNav} />
 </div>
