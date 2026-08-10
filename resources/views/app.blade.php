@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title inertia>{{ config('app.name', 'Platform') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @if(app()->isProduction())
+        @php
+            $theme = tenant('theme') ?? 'default';
+        @endphp
+        @vite(["resources/css/themes/{$theme}.css"])
+    @endif
     @inertiaHead
 </head>
 <body class="font-sans antialiased">
