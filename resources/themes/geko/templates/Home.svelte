@@ -8,7 +8,7 @@
     import SeoHead from '../../../js/Components/Frontend/SeoHead.svelte';
     import type { ThemeProps } from '../../../js/types';
 
-    let { sections, config, nav, url }: ThemeProps = $props();
+    let { sections, config, nav, footerNav, url }: ThemeProps = $props();
 
     // Brand-vision tags, straight from the CI's own wording ("solidarischen,
     // multiprofessionellen, queerfeministischen Gesundheitsversorgung") —
@@ -134,5 +134,5 @@
         </section>
     </main>
 
-    <Footer {config} {nav} />
+    <Footer {config} {footerNav} />
 </div>

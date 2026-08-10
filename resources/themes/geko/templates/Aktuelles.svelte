@@ -7,7 +7,7 @@
     import { sanitizeHtml } from '../../../js/lib/sanitizeHtml';
     import type { ThemeProps } from '../../../js/types';
 
-    let { page, sections, config, nav, url }: ThemeProps = $props();
+    let { page, sections, config, nav, footerNav, url }: ThemeProps = $props();
 
     // Fixed keys, not a scan across sections for type === 'posts'/'events'
     // — see THEMES.md §8. This is the one page whose 'aktuelles' template
@@ -61,5 +61,5 @@
         {/if}
     </main>
 
-    <Footer {config} {nav} />
+    <Footer {config} {footerNav} />
 </div>

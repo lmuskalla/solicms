@@ -3,7 +3,7 @@
     import iconUrl from '../assets/images/icon.svg';
     import type { ThemeProps } from '../../../js/types';
 
-    let { config, nav = [] }: Pick<ThemeProps, 'config' | 'nav'> = $props();
+    let { config, footerNav = [] }: Pick<ThemeProps, 'config' | 'footerNav'> = $props();
 </script>
 
 <footer class="bg-[var(--geko-indigo)] text-white">
@@ -22,7 +22,7 @@
 
         <nav aria-label="Fußzeilennavigation">
             <ul class="flex flex-col gap-2 text-base text-white/80">
-                {#each nav as item (item.href)}
+                {#each footerNav as item (item.href)}
                     <li><Link href={item.href} class="hover:text-white">{item.label}</Link></li>
                 {/each}
                 {#if config.contact_email}

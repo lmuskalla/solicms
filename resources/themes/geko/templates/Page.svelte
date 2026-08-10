@@ -5,7 +5,7 @@
     import { sanitizeHtml } from '../../../js/lib/sanitizeHtml';
     import type { ThemeProps } from '../../../js/types';
 
-    let { page, sections, config, nav, url }: ThemeProps = $props();
+    let { page, sections, config, nav, footerNav, url }: ThemeProps = $props();
 </script>
 
 <SeoHead title={`${page?.title} — ${config.site_name ?? 'Gesundheitskollektiv Bremen'}`} {sections} {url} />
@@ -24,5 +24,5 @@
         </article>
     </main>
 
-    <Footer {config} {nav} />
+    <Footer {config} {footerNav} />
 </div>
