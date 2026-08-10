@@ -3,8 +3,8 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
-@source '../js/**/*.svelte';
-@source '../themes/dvm/**/*.svelte';
+@source '../../js/**/*.svelte';
+@source '../../themes/dvm/**/*.svelte';
 
 @import '../../themes/dvm/style.css';
 
