@@ -33,13 +33,19 @@ class PageController extends Controller
         // comment on Admin\PageController::edit().
         $page->load('sections.posts');
 
+        // Editor-built, not auto-derived from the page list — see
+        // App\Models\NavItem. A page can exist without being in any menu.
+        // Split per menu ('header'/'footer') — values() re-indexes after the
+        // collection filter drops keys.
+        $navItems = NavItem::with('page:id,slug')->orderBy('order')->get();
+
         return Inertia::render('Frontend/Page', [
             'page' => $page,
             'sections' => $this->withPostsRefs($page),
             'config' => SiteConfig::allAsMap(),
-            // Editor-built, not auto-derived from the page list — see
-            // App\Models\NavItem. A page can exist without being in any menu.
-            'nav' => NavItem::with('page:id,slug')->orderBy('order')->get()
+            'nav' => $navItems->where('menu', 'header')->values()
+                ->map(fn (NavItem $item) => ['label' => $item->label, 'href' => $item->href()]),
+            'footerNav' => $navItems->where('menu', 'footer')->values()
                 ->map(fn (NavItem $item) => ['label' => $item->label, 'href' => $item->href()]),
             // resources/themes/<theme>/<component>.svelte, resolved from
             // config/themes.php. Page.svelte loads whichever file this points

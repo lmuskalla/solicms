@@ -28,11 +28,17 @@ class PostController extends Controller
             abort(404);
         }
 
+        // Split per menu ('header'/'footer') — values() re-indexes after the
+        // collection filter drops keys.
+        $navItems = NavItem::with('page:id,slug')->orderBy('order')->get();
+
         return Inertia::render('Frontend/Page', [
             'page' => ['title' => $post->title, 'template' => 'wysiwyg'],
             'sections' => ['body' => ['value' => $post->body]],
             'config' => SiteConfig::allAsMap(),
-            'nav' => NavItem::with('page:id,slug')->orderBy('order')->get()
+            'nav' => $navItems->where('menu', 'header')->values()
+                ->map(fn (NavItem $item) => ['label' => $item->label, 'href' => $item->href()]),
+            'footerNav' => $navItems->where('menu', 'footer')->values()
                 ->map(fn (NavItem $item) => ['label' => $item->label, 'href' => $item->href()]),
             'themeComponent' => $this->themeComponent('wysiwyg'),
         ]);
