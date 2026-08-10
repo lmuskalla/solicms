@@ -9,11 +9,13 @@ author: Leander Muskalla
 
 ## What
 
-<!-- What needs to be done? Be specific. -->
+Our navigation settings in the admin ui need to accomodate that there are different navigations.
+E.g. in DVM, we have a header navigation (all pages) and a footer navigation (just contact, imprint, etc.).
 
 ## Why
 
-<!-- Why does this need to exist? What problem does it solve for the user? -->
+You don't always want to have the exact same navigation at the bottom like at the top.
+Top is for quick access. Bottom is for less relevant things.
 
 ## Out of scope
 
