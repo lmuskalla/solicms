@@ -133,6 +133,7 @@ class TenantContentExporter
                 'label' => $nav->label,
                 'url' => $nav->url,
                 'order' => $nav->order,
+                'menu' => $nav->menu,
             ];
         }
 

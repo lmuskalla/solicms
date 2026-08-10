@@ -88,12 +88,14 @@ class TenantProvisioner
             $this->seedSections($page, $theme);
 
             // Navigation is editor-built from here on (see NavItem), but a
-            // fresh tenant shouldn't start with an empty menu.
+            // fresh tenant shouldn't start with an empty menu. Explicit
+            // 'menu' for clarity — 'header' is the column default anyway.
             NavItem::create([
                 'type' => 'page',
                 'page_id' => $page->id,
                 'label' => $page->title,
                 'order' => $order + 1,
+                'menu' => 'header',
             ]);
         }
     }

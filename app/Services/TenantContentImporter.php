@@ -276,6 +276,10 @@ class TenantContentImporter
                 'label' => $navData['label'],
                 'url' => $navData['url'],
                 'order' => $navData['order'],
+                // Archives exported before nav_items gained a `menu` column
+                // have no such key — 'header' is the column default, and the
+                // only menu that existed then.
+                'menu' => $navData['menu'] ?? 'header',
             ]);
             $counts['nav_items']++;
         }
