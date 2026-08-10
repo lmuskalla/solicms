@@ -8,10 +8,10 @@
 
     interface Props {
         config: Record<string, string>;
-        nav?: NavItem[];
+        footerNav?: NavItem[];
     }
 
-    let { config, nav = [] }: Props = $props();
+    let { config, footerNav = [] }: Props = $props();
 </script>
 
 <footer>
@@ -24,7 +24,7 @@
 
             <nav class="footer-menu">
                 <ul>
-                    {#each nav as item (item.href)}
+                    {#each footerNav as item (item.href)}
                         <li><Link href={item.href}>{item.label}</Link></li>
                     {/each}
                     {#if config.contact_email}

@@ -10,10 +10,11 @@
         sections: Record<string, { value: string; type?: string }>;
         config: Record<string, string>;
         nav: Array<{ label: string; href: string }>;
+        footerNav: Array<{ label: string; href: string }>;
         url?: string;
     }
 
-    let { sections, config, nav, url }: Props = $props();
+    let { sections, config, nav, footerNav, url }: Props = $props();
 
     // Three numbered narrative blocks — background classes and order mirror the
     // original theme's template-homepage.php (bg-baseAccent, bg-white, bg-logoBeige).
@@ -104,5 +105,5 @@
         {/each}
     </article>
 
-    <Footer {config} {nav} />
+    <Footer {config} {footerNav} />
 </div>

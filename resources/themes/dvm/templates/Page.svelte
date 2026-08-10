@@ -12,10 +12,11 @@
         sections: Record<string, { value: string; type?: string }>;
         config: Record<string, string>;
         nav: Array<{ label: string; href: string }>;
+        footerNav: Array<{ label: string; href: string }>;
         url?: string;
     }
 
-    let { page, sections, config, nav, url }: Props = $props();
+    let { page, sections, config, nav, footerNav, url }: Props = $props();
 
     // Mirrors header.php's own scroll listener, which also toggles
     // .scrolled-out on #page so content isn't hidden under the fixed header.
@@ -60,5 +61,5 @@
         </article>
     </div>
 
-    <Footer {config} {nav} />
+    <Footer {config} {footerNav} />
 </div>
