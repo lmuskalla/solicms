@@ -96,7 +96,7 @@ class NavigationController extends Controller
     /**
      * One menu's items in display order. Which of the two menus ('header' or
      * 'footer' — see NavItem::MENUS) is passed decides the list; the admin
-     * screen renders the two side by side.
+     * screen renders the two stacked, one beneath the other.
      *
      * @return list<array{id: int, type: string, label: string, url: ?string, page: ?array{id: int, title: string}}>
      */

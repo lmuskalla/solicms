@@ -44,7 +44,7 @@
             <p class="mt-4 rounded-lg bg-admin-success/10 px-4 py-3 text-sm text-admin-success">{flash.success}</p>
         {/if}
 
-        <div class="mt-6 grid items-start gap-6 xl:grid-cols-2">
+        <div class="mt-6 space-y-6">
             <NavList title="Kopfzeilen-Navigation" menu="header" items={headerItems} {pages} />
             <NavList title="Fußzeilen-Navigation" menu="footer" items={footerItems} {pages} />
         </div>

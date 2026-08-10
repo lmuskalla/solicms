@@ -26,8 +26,6 @@
 
     let { title, menu, items, pages }: Props = $props();
 
-    const otherMenuLabel = $derived(menu === 'header' ? 'In Fußzeile verschieben' : 'In Kopfzeile verschieben');
-
     // --- Add a page (menu is implied by which list the form lives in) ---
     let selectedPageId = $state(untrack(() => pages[0]?.id ?? null));
     let addingPage = $state(false);
@@ -70,19 +68,6 @@
     // --- Reorder (within this menu — the server scopes the neighbor lookup) ---
     function move(item: NavItemRow, direction: 'up' | 'down'): void {
         router.post(`/admin/navigation/${item.id}/move`, { direction }, { preserveScroll: true });
-    }
-
-    // --- Move to the other menu (appends at its end server-side) ---
-    function moveToOtherMenu(item: NavItemRow): void {
-        router.patch(
-            `/admin/navigation/${item.id}`,
-            {
-                label: item.label,
-                url: item.url ?? '',
-                menu: menu === 'header' ? 'footer' : 'header',
-            },
-            { preserveScroll: true },
-        );
     }
 
     // --- Inline edit ---
@@ -187,13 +172,6 @@
                                 <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
                                     <path fill-rule="evenodd" d="M10 17a.75.75 0 0 1-.55-.24l-4.5-4.83a.75.75 0 1 1 1.1-1.02l3.2 3.44V4.5a.75.75 0 0 1 1.5 0v9.85l3.2-3.44a.75.75 0 1 1 1.1 1.02l-4.5 4.83A.75.75 0 0 1 10 17Z" clip-rule="evenodd" />
                                 </svg>
-                            </button>
-                            <button
-                                onclick={() => moveToOtherMenu(item)}
-                                title={otherMenuLabel}
-                                class="cursor-pointer px-2 py-1.5 text-sm text-admin-text-secondary hover:text-admin-text"
-                            >
-                                {otherMenuLabel}
                             </button>
                             <button
                                 onclick={() => startEdit(item)}
