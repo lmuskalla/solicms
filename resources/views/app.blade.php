@@ -4,15 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title inertia>{{ config('app.name', 'Platform') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @if(app()->isProduction())
-        @php
-            $theme = tenant('theme') ?? 'default';
-        @endphp
-        @vite(["resources/css/themes/{$theme}.css"])
-    @else
-        @vite(['resources/css/themes/default.css', 'resources/css/themes/dvm.css', 'resources/css/themes/geko.css', 'resources/css/themes/tabubruch.css'])
-    @endif
+    @php
+        // Only the active tenant's theme CSS ever loads — in dev as well as
+        // prod. Previously dev loaded every theme's CSS (default, dvm, geko,
+        // tabubruch), so a geko page downloaded and applied dvm/tabubruch
+        // utilities too, and cascade conflicts between those builds silently
+        // changed layout (wrong column counts, button sizing, headline size)
+        // depending on load order. Each theme's own style.css (design tokens)
+        // is already isolated per theme by Pages/Frontend/Page.svelte.
+        $theme = tenant('theme') ?? 'default';
+    @endphp
+    @vite(['resources/css/app.css', 'resources/js/app.js', "resources/css/themes/{$theme}.css"])
     @inertiaHead
 </head>
 <body class="font-sans antialiased">

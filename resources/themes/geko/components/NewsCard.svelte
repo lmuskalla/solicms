@@ -18,7 +18,9 @@
                  real one via the "Bild" field once they have one. -->
             <PlaceholderPhoto />
         {/if}
-        <span class="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-sm font-medium text-[var(--geko-violet)] shadow-sm">
+        <span
+            class="absolute bottom-3 left-3 max-w-[calc(100%-1.5rem)] truncate rounded-full bg-white/90 px-3 py-1 text-sm font-medium text-[var(--geko-violet)] shadow-sm"
+        >
             {post.title}
         </span>
     </div>

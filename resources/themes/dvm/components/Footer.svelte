@@ -27,9 +27,6 @@
                     {#each footerNav as item (item.href)}
                         <li><Link href={item.href}>{item.label}</Link></li>
                     {/each}
-                    {#if config.contact_email}
-                        <li><a href={`mailto:${config.contact_email}`}>{config.contact_email}</a></li>
-                    {/if}
                 </ul>
             </nav>
         </div>

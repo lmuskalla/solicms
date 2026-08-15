@@ -95,6 +95,13 @@
      * headings included, proportionally instead of hand-tuning each one. */
     @apply prose prose-lg prose-neutral max-w-none;
 
+    /* Long, unbroken German compounds (Stadtteilgesundheitszentrum) don't
+     * have a space to wrap on — without this they push past the column and
+     * cause horizontal overflow on narrow screens, worst in headings which
+     * run the biggest font-size. */
+    overflow-wrap: break-word;
+    hyphens: auto;
+
     a {
         color: var(--geko-violet);
         text-decoration-thickness: 1.5px;
@@ -105,6 +112,9 @@
         font-family: 'Inter Tight', 'Inter', ui-sans-serif, system-ui, sans-serif;
         font-weight: 300;
         color: var(--geko-indigo);
+        /* Clears the sticky header when jumped to via the "Auf dieser Seite"
+         * TOC links in Page.svelte. */
+        scroll-margin-top: 6rem;
     }
 
     /* Explicit sizes on top of prose-lg's own scale, so h2/h3 read clearly
@@ -127,5 +137,29 @@
 
     li::marker {
         color: var(--geko-violet);
+    }
+
+    /* prose-lg's default list margins (my-5/pl-[1.625em], li my-2) read as
+     * excessive whitespace next to this brand's light, dense body copy —
+     * tightened to sit closer to a plain paragraph's rhythm. */
+    ul,
+    ol {
+        margin-top: 0.75em;
+        margin-bottom: 0.75em;
+    }
+
+    li {
+        margin-top: 0.25em;
+        margin-bottom: 0.25em;
+    }
+
+    /* List paragraphs — the WYSIWYG wraps every li's content in a <p>, and
+     * the typography plugin's generic p margin (1.3333em at prose-lg) was
+     * still landing here even after the li rule above, since it's the more
+     * specific of the two. The li margin already spaces items out; the p
+     * inside doesn't need to add its own on top. */
+    li p {
+        margin-top: 0;
+        margin-bottom: 0;
     }
 }

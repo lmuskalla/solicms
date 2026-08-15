@@ -28,11 +28,31 @@
     // Deliberately captured once: Inertia mounts a fresh instance of this page
     // component per visit (different URL, no persistent layout), so the
     // initial value is always this page's own.
+    let title = $state(untrack(() => page.title));
     let template = $state(untrack(() => page.template));
     let published = $state(untrack(() => page.published));
+    let titleSaved = $state(false);
     let saved = $state(false);
     let publishSaved = $state(false);
     let confirmDeleteOpen = $state(false);
+
+    function saveTitle(): void {
+        if (title === page.title) {
+            return;
+        }
+
+        router.patch(
+            `/admin/pages/${page.id}`,
+            { title },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    titleSaved = true;
+                    setTimeout(() => (titleSaved = false), 2000);
+                },
+            },
+        );
+    }
 
     function saveTemplate(): void {
         router.patch(
@@ -93,7 +113,21 @@
             </button>
         </div>
 
-        <h1 class="mt-3 text-2xl font-semibold tracking-tight text-admin-text">{page.title}</h1>
+        <div class="mt-3 flex items-center justify-between gap-3">
+            <input
+                id="title"
+                bind:value={title}
+                onblur={saveTitle}
+                onkeydown={(e) => {
+                    if (e.key === 'Enter') (e.currentTarget as HTMLInputElement).blur();
+                }}
+                aria-label="Seitentitel"
+                class="w-full max-w-xl rounded-lg border border-transparent bg-transparent px-1 -mx-1 text-2xl font-semibold tracking-tight text-admin-text hover:border-admin-border focus:border-admin-primary focus:outline-none focus:ring-1 focus:ring-admin-primary"
+            />
+            {#if titleSaved}
+                <span class="text-xs font-medium text-admin-success">Gespeichert</span>
+            {/if}
+        </div>
 
         <div class="mt-6 rounded-admin-card border border-admin-border bg-admin-card p-6 shadow-admin-card">
             <div class="mb-2 flex items-center justify-between">

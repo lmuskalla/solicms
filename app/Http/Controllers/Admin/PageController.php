@@ -128,6 +128,7 @@ class PageController extends Controller
     public function update(Request $request, Page $page): RedirectResponse
     {
         $validated = $request->validate([
+            'title' => ['sometimes', 'required', 'string', 'max:255'],
             'template' => ['sometimes', 'required', Rule::in(array_keys($this->themeTemplates()))],
             'published' => ['sometimes', 'boolean'],
         ]);
