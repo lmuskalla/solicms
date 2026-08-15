@@ -9,7 +9,9 @@ author: Leander Muskalla
 
 ## What
 
-<!-- What needs to be done? Be specific. -->
+We need to build favicon support.
+The logo of a theme should automatically be used as favicon.
+The admin ui should use the logo that is also shown in the left sidebar as a favicon.
 
 ## Why
 
