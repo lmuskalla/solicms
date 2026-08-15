@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Link, router } from '@inertiajs/svelte';
     import { untrack } from 'svelte';
+    import { showToast } from '../../../lib/toast.svelte';
     import Layout from '../../../Components/Admin/Layout.svelte';
     import SectionField from '../../../Components/Admin/SectionField.svelte';
     import ConfirmDialog from '../../../Components/Admin/ConfirmDialog.svelte';
@@ -63,6 +64,7 @@
                 onSuccess: () => {
                     saved = true;
                     setTimeout(() => (saved = false), 2000);
+                    showToast('Gespeichert');
                 },
             },
         );
@@ -77,6 +79,7 @@
                 onSuccess: () => {
                     publishSaved = true;
                     setTimeout(() => (publishSaved = false), 2000);
+                    showToast('Gespeichert');
                 },
             },
         );

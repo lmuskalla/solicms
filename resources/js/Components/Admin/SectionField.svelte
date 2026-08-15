@@ -1,6 +1,7 @@
 <script lang="ts">
     import { router } from '@inertiajs/svelte';
     import { untrack } from 'svelte';
+    import { showToast } from '../../lib/toast.svelte';
     import TiptapEditor from './TiptapEditor.svelte';
     import ImageUpload from './ImageUpload.svelte';
     import PostsManager from './PostsManager.svelte';
@@ -44,6 +45,7 @@
                 onSuccess: () => {
                     saved = true;
                     setTimeout(() => (saved = false), 2000);
+                    showToast('Gespeichert');
                 },
                 onFinish: () => (saving = false),
             },
@@ -110,15 +112,20 @@
             <input id={`section-${section.id}`} type="text" bind:value class={inputClasses} />
         {/if}
 
-        <button
-            onclick={speichern}
-            disabled={saving}
-            class="mt-4 flex items-center gap-2 rounded-lg bg-admin-primary px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-admin-primary-hover disabled:opacity-50 cursor-pointer"
-        >
-            {#if saving}
-                <span class="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>
-            {/if}
-            {saving ? 'Speichern…' : 'Speichern'}
-        </button>
+        <!-- Sticky to the viewport bottom so the save button stays in view
+             while editing a long section, instead of only being reachable
+             after scrolling all the way down the card. -->
+        <div class="sticky bottom-4 mt-4">
+            <button
+                onclick={speichern}
+                disabled={saving}
+                class="flex items-center gap-2 rounded-lg bg-admin-primary px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-admin-primary-hover disabled:opacity-50 cursor-pointer"
+            >
+                {#if saving}
+                    <span class="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>
+                {/if}
+                {saving ? 'Speichern…' : 'Speichern'}
+            </button>
+        </div>
     {/if}
 </div>

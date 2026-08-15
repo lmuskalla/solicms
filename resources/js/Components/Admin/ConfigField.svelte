@@ -1,6 +1,7 @@
 <script lang="ts">
     import { router } from '@inertiajs/svelte';
     import { untrack } from 'svelte';
+    import { showToast } from '../../lib/toast.svelte';
 
     interface Props {
         config: {
@@ -34,6 +35,7 @@
                 onSuccess: () => {
                     saved = true;
                     setTimeout(() => (saved = false), 2000);
+                    showToast('Gespeichert');
                 },
                 onFinish: () => (saving = false),
             },

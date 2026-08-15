@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import type { Snippet } from 'svelte';
     import { Link, router, page } from '@inertiajs/svelte';
+    import Toast from './Toast.svelte';
     import type { Auth } from '../../types';
 
     interface Props {
@@ -127,4 +128,8 @@
             {@render children()}
         </div>
     </main>
+
+    <!-- Global save notification — outside the max-w-4xl content container
+         so it floats over the whole admin UI (see Toast.svelte). -->
+    <Toast />
 </div>

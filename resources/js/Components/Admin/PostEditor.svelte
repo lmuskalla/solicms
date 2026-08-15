@@ -1,6 +1,7 @@
 <script lang="ts">
     import { router } from '@inertiajs/svelte';
     import { untrack } from 'svelte';
+    import { showToast } from '../../lib/toast.svelte';
     import TiptapEditor from './TiptapEditor.svelte';
     import ImageUpload from './ImageUpload.svelte';
     import ConfirmDialog from './ConfirmDialog.svelte';
@@ -55,6 +56,7 @@
                 onSuccess: () => {
                     saved = true;
                     setTimeout(() => (saved = false), 2000);
+                    showToast('Gespeichert');
                 },
                 onFinish: () => (saving = false),
             },
