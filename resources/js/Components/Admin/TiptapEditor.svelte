@@ -178,8 +178,8 @@
     </button>
 {/snippet}
 
-<div class="overflow-hidden rounded-lg border border-admin-border focus-within:border-admin-primary focus-within:ring-1 focus-within:ring-admin-primary">
-    <div class="flex flex-wrap items-center gap-1 border-b border-admin-border bg-admin-bg p-1.5">
+<div class="rounded-lg border border-admin-border focus-within:border-admin-primary focus-within:ring-1 focus-within:ring-admin-primary">
+    <div class="sticky top-0 z-10 flex flex-wrap items-center gap-1 rounded-t-lg border-b border-admin-border bg-admin-bg p-1.5">
         {@render toolbarButton('Fett', isActive('bold'), () => editor.chain().focus().toggleBold().run())}
         {@render toolbarButton('Kursiv', isActive('italic'), () => editor.chain().focus().toggleItalic().run())}
         {@render toolbarButton('H2', isActive('heading', { level: 2 }), () =>
@@ -210,7 +210,7 @@
         <p class="border-t border-admin-border px-4 py-2 text-sm text-admin-error">{uploadError}</p>
     {/if}
 
-    <p class="border-t border-admin-border px-4 py-1.5 text-xs text-admin-text-muted">
+    <p class="rounded-b-lg border-t border-admin-border px-4 py-1.5 text-xs text-admin-text-muted">
         Bilder und PDFs können auch direkt in den Text gezogen oder eingefügt werden.
     </p>
 </div>
