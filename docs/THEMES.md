@@ -86,6 +86,19 @@ happens to work only because a file sits at that path today:
 Never hotlink a client's original site or a third-party CDN either way —
 download and commit what's actually used.
 
+**Favicon.** Every theme should ship a square, light-background-safe version
+of its mark at `assets/images/favicon.<ext>` (`svg`, `png` and `ico` all
+work). It is picked up automatically: the platform serves it at
+`/favicon/<slug>` (resolved by `App\Services\ThemeFavicon`) and the shared
+root view links it on every tenant page — nothing to register, nothing to
+bust, the URL is cache-immutable by design. The resolver falls back to
+`assets/images/icon.<ext>`, then `assets/images/logo.<ext>`, so a theme
+without a dedicated favicon still gets its closest existing mark — but
+don't rely on that for the themes you ship: wordmarks and white-filled
+icons designed for a dark header/footer read as smears at 16–32px on a
+light browser tab. A theme with no usable mark at all (like `default`)
+gets the platform default favicon instead.
+
 Nothing else needs touching to add a theme. `Pages/Frontend/Page.svelte`
 resolves `<theme>/<component>` and `<theme>/style.css` via
 `import.meta.glob`, generically, for every theme that will ever exist.
