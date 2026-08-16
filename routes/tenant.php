@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Frontend\PageController;
+use App\Http\Controllers\Frontend\FaviconController;
 use App\Http\Controllers\Frontend\PostController as FrontendPostController;
 use App\Http\Controllers\Frontend\SitemapController;
 use Illuminate\Support\Facades\Route;
@@ -49,6 +50,13 @@ Route::middleware([
     // Registered before the /{slug} catch-all below, same as /aktuelles/{slug}
     // — otherwise "sitemap.xml" would be swallowed as a literal page slug.
     Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+
+    // Theme favicon — /favicon/{theme} (two segments, no static file to
+    // shadow it, unlike a plain /favicon.ico which php artisan serve serves
+    // straight from public/). Registered here, before the /{slug} catch-all,
+    // so "favicon" can never be swallowed as a literal page slug. The URL is
+    // immutable-cached per theme slug — see FaviconController.
+    Route::get('/favicon/{theme}', [FaviconController::class, 'show']);
 
     Route::prefix('admin')->group(function () {
         // Not behind 'guest' — it should work regardless of current auth
