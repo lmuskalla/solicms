@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { fly } from 'svelte/transition';
+    import { quintOut } from 'svelte/easing';
     import { toast } from '../../lib/toast.svelte';
 </script>
 
@@ -11,7 +13,8 @@
     <div
         role="status"
         aria-live="polite"
-        class="fixed right-4 top-4 z-[60] flex items-center gap-2 rounded-admin-card border border-admin-border bg-admin-card px-4 py-3 shadow-admin-card"
+        transition:fly={{ y: -12, duration: 250, easing: quintOut }}
+        class="fixed right-4 top-4 z-[60] flex items-center gap-2.5 rounded-admin-card border border-admin-border border-l-4 border-l-admin-success bg-admin-card px-4 py-3 shadow-xl shadow-admin-success/10"
     >
         <svg viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5 shrink-0 text-admin-success">
             <path
@@ -20,6 +23,6 @@
                 clip-rule="evenodd"
             />
         </svg>
-        <span class="text-sm font-semibold text-admin-text">{toast.message}</span>
+        <span class="text-sm text-admin-text">{toast.message}</span>
     </div>
 {/if}

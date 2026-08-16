@@ -112,10 +112,7 @@
             <input id={`section-${section.id}`} type="text" bind:value class={inputClasses} />
         {/if}
 
-        <!-- Sticky to the viewport bottom so the save button stays in view
-             while editing a long section, instead of only being reachable
-             after scrolling all the way down the card. -->
-        <div class="sticky bottom-4 mt-4">
+        <div class="mt-4">
             <button
                 onclick={speichern}
                 disabled={saving}
