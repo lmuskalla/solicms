@@ -2,6 +2,7 @@
     import { Link } from '@inertiajs/svelte';
     import iconUrl from '../assets/images/icon.svg';
     import type { ThemeProps } from '../../../js/types';
+    import senatorinLogoUrl from '../assets/images/senatorin.jpg';
 
     let { config, footerNav = [] }: Pick<ThemeProps, 'config' | 'footerNav'> = $props();
 </script>
@@ -29,6 +30,9 @@
                     <li><a href={`mailto:${config.contact_email}`} class="hover:text-white">{config.contact_email}</a></li>
                 {/if}
             </ul>
+            <div class="p-4 bg-white mt-4 rounded-l-4xl">
+                <img src={senatorinLogoUrl} alt={'Senatorin für Gesundheit'} class="h-14 w-auto" />
+            </div>
         </nav>
     </div>
 
