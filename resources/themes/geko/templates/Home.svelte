@@ -88,7 +88,8 @@
         <section class="mt-6 flex gap-4 max-lg:flex-col">
             <div class="w-2/3 max-lg:w-full flex flex-col items-start justify-end relative">
                 <h1
-                    class="w-full text-4xl font-light leading-[1.1] tracking-tight text-neutral-900 sm:w-11/12 sm:text-5xl sm:leading-[1.1] lg:text-6xl lg:leading-18"
+                    lang="de"
+                    class="w-full [hyphens:auto] [overflow-wrap:anywhere] text-4xl font-light leading-[1.1] tracking-tight text-neutral-900 sm:w-11/12 sm:text-5xl sm:leading-[1.1] lg:text-6xl lg:leading-18"
                 >
                     {sections.hero_text?.value || 'Stadtteilgesundheitszentrum in der Überseestadt'}
                 </h1>
